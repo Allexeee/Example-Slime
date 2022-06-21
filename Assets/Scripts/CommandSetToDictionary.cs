@@ -4,13 +4,13 @@ using PixeyeGames.Ioc;
 
 namespace PixeyeGames.ExampleSlime
 {
-  public class CommandIocRegister : ICommand
+  public class CommandSetToDictionary : ICommand
   {
     Dictionary<Key, object> _storage;
-    IocResolve              _value;
+    object                  _value;
     Key                     _key;
 
-    public CommandIocRegister(Dictionary<Key, object> storage, Key key, IocResolve value)
+    public CommandSetToDictionary(Dictionary<Key, object> storage, Key key, object value)
     {
       _storage = storage;
       _value   = value;
