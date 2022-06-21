@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using PixeyeGames.Ioc;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -12,6 +12,17 @@ namespace PixeyeGames.ExampleSlime
     GameObject _prefab;
 
     IList<IObject> Collection { get; } = new Collection<IObject>();
+
+    void Awake()
+    {
+      IoC.Main.Register("Example", Callback);
+    }
+
+    object Callback(IArgs args)
+    {
+      Debug.Log($"Example");
+      return _prefab;
+    }
 
     void Update()
     {
@@ -27,10 +38,15 @@ namespace PixeyeGames.ExampleSlime
       {
         Save();
       }
-      
+
       if (Input.GetKeyUp(KeyCode.Alpha3))
       {
         Load();
+      }
+
+      if (Input.GetKeyUp(KeyCode.Alpha4))
+      {
+        IoC.Main.Get<object>("Example");
       }
     }
 
