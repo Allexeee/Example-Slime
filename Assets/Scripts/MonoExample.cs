@@ -15,7 +15,7 @@ namespace PixeyeGames.ExampleSlime
 
     void Awake()
     {
-      IoC.Main.Register("Example", Callback);
+      IoC.Register("Example", Callback);
     }
 
     object Callback(IArgs args)
@@ -46,7 +46,7 @@ namespace PixeyeGames.ExampleSlime
 
       if (Input.GetKeyUp(KeyCode.Alpha4))
       {
-        IoC.Main.Get<object>("Example");
+        IoC.Get<object>("Example");
       }
     }
 
