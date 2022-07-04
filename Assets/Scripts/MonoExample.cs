@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using ExampleData;
 using PixeyeGames.Ioc;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -9,7 +10,7 @@ namespace PixeyeGames.ExampleSlime
   class MonoExample : MonoBehaviour
   {
     [SerializeField]
-    List<DataExampleObject> Collection = new List<DataExampleObject>();
+    List<DObject> Collection = new List<DObject>();
 
     void Awake()
     {
@@ -35,6 +36,8 @@ namespace PixeyeGames.ExampleSlime
       if (Input.GetKeyUp(KeyCode.Alpha1))
       {
         Factory.CreateExample();
+        
+        // new ExampleData.Example().Create();
       }
     }
   }

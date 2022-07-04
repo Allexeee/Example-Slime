@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
+using ExampleData;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PixeyeGames.Ioc;
@@ -16,34 +17,63 @@ namespace PixeyeGames.ExampleSlime
 {
   public static class Factory
   {
-    public static DataExampleObject CreateExample()
+    public static DToken CreateExample()
     {
-      var result = new DataExampleObject();
-      // result.PropertyChanged += OnPositionChanged;
+      var result = new DObject();
+      result["Properties"]["Position"].OnChanged += PositionOnChanged;
 
-      ((JObject) result["Properties"]).PropertyChanged             += OnPropertiesChanged;
-      ((JObject) result["Properties"]["Position"]).PropertyChanged += OnPositionChanged;
-      // ((JObject) result["Properties"]["Position"]["X"]).PropertyChanged += OnPositionChanged;
-      // ((JObject) result["Properties"]["Position"]["Y"]).PropertyChanged += OnPositionChanged;
+      result["Properties"]["Position"] = DConverter.To(new Vector2(5f, 0f));
 
-      result["Properties"]["Position"] = JToken.FromObject(new Vector3(5f, 2f, 0f));
       RegisterObject(result);
       return result;
     }
 
-    static void OnPropertiesChanged(object sender, PropertyChangedEventArgs e)
+    static void PositionOnChanged(object sender, EventArgs e)
     {
-      Debug.Log($"OnPropertiesChanged\r{sender}\r{e.PropertyName}");
+      var dObject    = sender as DObject;
+      var gameObject = GetGameObject(dObject);
+
+      var newValue = GetPosition(dObject);
+
+      gameObject.transform.position = newValue;
     }
 
-    static void OnPositionChanged(object sender, PropertyChangedEventArgs e)
+    static Vector2 GetPosition(DObject dObject)
     {
-      Debug.Log($"OnPositionChanged\r{sender}\r{e.PropertyName}");
+      var dValue = dObject["Position"].Value;
+      var value  = DConverter.From<Vector2>(dValue);
+
+      return value;
     }
 
-    static void RegisterObject(DataExampleObject obj)
+    static GameObject GetGameObject(DObject dObject)
     {
-      IoC.Get<IList<DataExampleObject>>("Objects").Add(obj);
+      var dProperty = dObject.Parent["Cache"]["GameObject"] as DProperty;
+      var value     = dProperty.Value;
+
+      GameObject gameObject;
+
+      if (value is DObject)
+      {
+        gameObject      = CreateGameObject();
+        dProperty.Value = DValue.CreateFrom(gameObject);
+      }
+      else
+      {
+        gameObject = ((DValue<GameObject>) value).Val;
+      }
+
+      return gameObject;
+    }
+
+    static GameObject CreateGameObject()
+    {
+      return new GameObject();
+    }
+
+    static void RegisterObject(DObject obj)
+    {
+      IoC.Get<IList<DObject>>("Objects").Add(obj);
     }
   }
 }
